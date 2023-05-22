@@ -1,4 +1,5 @@
 input AuthorModelFilter {
+  AND: [AuthorModelFilter]
   OR: [AuthorModelFilter]
   _createdAt: CreatedAtFilter
   _firstPublishedAt: PublishedAtFilter
@@ -89,6 +90,7 @@ input BooleanFilter {
 scalar BooleanType
 
 input CategoryModelFilter {
+  AND: [CategoryModelFilter]
   OR: [CategoryModelFilter]
   _createdAt: CreatedAtFilter
   _firstPublishedAt: PublishedAtFilter
@@ -170,6 +172,7 @@ enum ColorBucketType {
 type ColorField {
   alpha: IntType!
   blue: IntType!
+  cssRgb: String!
   green: IntType!
   hex: String!
   red: IntType!
@@ -282,7 +285,7 @@ type FileField implements FileFieldInterface {
     """
     punch: Float! = 1
 
-    """JPEG quality (defaults to 70%)"""
+    """Image quality (defaults to 70%)"""
     quality: Int! = 70
 
     """Maximum image dimension (defaults to 24px)"""
@@ -335,6 +338,7 @@ type FileField implements FileFieldInterface {
   size: IntType!
   smartTags: [String!]!
   tags: [String!]!
+  thumbhash: String
   title(
     """
     If you want to fallback to a default translation when a translation has not been found
@@ -375,7 +379,7 @@ interface FileFieldInterface {
     """
     punch: Float! = 1
 
-    """JPEG quality (defaults to 70%)"""
+    """Image quality (defaults to 70%)"""
     quality: Int! = 70
 
     """Maximum image dimension (defaults to 24px)"""
@@ -428,6 +432,7 @@ interface FileFieldInterface {
   size: IntType!
   smartTags: [String!]!
   tags: [String!]!
+  thumbhash: String
   title(
     """
     If you want to fallback to a default translation when a translation has not been found
@@ -532,6 +537,15 @@ input ImgixParams {
   [Open Imgix reference »](https://docs.imgix.com/apis/url/bg)
   """
   bg: String
+
+  """
+  Background Removal
+  
+  Removes background from image.
+  
+  [Open Imgix reference »](https://docs.imgix.com/apis/rendering/background-removal/bg-remove)
+  """
+  bgRemove: BooleanType
 
   """
   Blend
@@ -1035,6 +1049,20 @@ input ImgixParams {
   fpZ: FloatType
 
   """
+  Frames Per Second
+  
+  Specifies the framerate of the generated image.
+  """
+  fps: IntType
+
+  """
+  Frame Selection
+  
+  Specifies the frame of an animated image to use.
+  """
+  frame: String
+
+  """
   Gamma
   
   Adjusts the gamma of the source image.
@@ -1042,6 +1070,13 @@ input ImgixParams {
   [Open Imgix reference »](https://docs.imgix.com/apis/url/adjustment/gam)
   """
   gam: IntType
+
+  """
+  Animated Gif Quality
+  
+  Depends on: `fm=gif`
+  """
+  gifQ: IntType
 
   """
   Grid Colors
@@ -1098,6 +1133,13 @@ input ImgixParams {
   hue: IntType
 
   """
+  Frame Interval
+  
+  Displays every Nth frame starting with the first frame.
+  """
+  interval: IntType
+
+  """
   Invert
   
   Inverts the colors on the source image.
@@ -1112,6 +1154,13 @@ input ImgixParams {
   Determine if IPTC data should be passed for JPEG images.
   """
   iptc: ImgixParamsIptc
+
+  """
+  Animation Loop Count
+  
+  Specifies the number of times an animated image should repeat. A value of 0 means infinite looping.
+  """
+  loop: IntType
 
   """
   Lossless Compression
@@ -1476,6 +1525,13 @@ input ImgixParams {
   rect: String
 
   """
+  Reverse
+  
+  Reverses the frame order on the source animation.
+  """
+  reverse: BooleanType
+
+  """
   Rotation
   
   Rotates an image by a specified number of degrees.
@@ -1519,6 +1575,13 @@ input ImgixParams {
   [Open Imgix reference »](https://docs.imgix.com/apis/url/adjustment/sharp)
   """
   sharp: FloatType
+
+  """
+  Frame Skip
+  
+  Skips every Nth frame starting with the first frame.
+  """
+  skip: IntType
 
   """
   Transparency
@@ -2088,6 +2151,7 @@ type PostModelContentField {
 }
 
 input PostModelFilter {
+  AND: [PostModelFilter]
   OR: [PostModelFilter]
   _createdAt: CreatedAtFilter
   _firstPublishedAt: PublishedAtFilter
@@ -2249,7 +2313,7 @@ type Query {
 
     """The locale to use to fetch the field's content"""
     locale: SiteLocale
-  ): CollectionMetadata
+  ): CollectionMetadata!
 
   """Returns the single instance record"""
   _site(
@@ -2492,6 +2556,7 @@ type Site {
 
 enum SiteLocale {
   en
+  th
 }
 
 """Specifies how to filter Slug fields"""
@@ -2767,6 +2832,7 @@ input UploadFilenameFilter {
 }
 
 input UploadFilter {
+  AND: [UploadFilter]
   OR: [UploadFilter]
   _createdAt: UploadCreatedAtFilter
   _updatedAt: UploadUpdatedAtFilter
